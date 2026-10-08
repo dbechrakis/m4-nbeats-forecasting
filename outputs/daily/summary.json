@@ -1,0 +1,23 @@
+{
+  "frequency": "Daily",
+  "series": 4227,
+  "horizon": 14,
+  "ensemble_members": 6,
+  "best_benchmark": "Theta",
+  "owa_ensemble": 1.0013860800885759,
+  "owa_best_benchmark": 0.9985113024339605,
+  "owa_gain_vs_best_benchmark_95ci": [
+    -0.006717549141092261,
+    0.0008068368140252579
+  ],
+  "share_of_series_ensemble_beats_best_benchmark_smape": 0.39436952921693874,
+  "validation_smape_ensemble": 2.8034891826447432,
+  "member_validation_smape": {
+    "generic-L2-s0": 2.8034394182089257,
+    "generic-L3-s1": 2.820787895612319,
+    "generic-L5-s2": 2.818547148804896,
+    "interpretable-L2-s3": 2.817177742185717,
+    "interpretable-L3-s4": 2.810002523060733,
+    "interpretable-L5-s5": 2.8352969124658816
+  }
+}

@@ -1,0 +1,9 @@
+method,smape,mase,owa
+N-BEATS generic only,3.0295,3.2571,0.9941
+Theta,3.0512,3.2622,0.9985
+Naive,3.0453,3.2784,1.0000
+Seasonal naive,3.0453,3.2784,1.0000
+Naive2,3.0453,3.2784,1.0000
+SES,3.0447,3.2807,1.0003
+N-BEATS ensemble (median),3.0486,3.2839,1.0014
+N-BEATS interpretable only,3.0675,3.3099,1.0084

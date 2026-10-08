@@ -1,0 +1,62 @@
+{
+  "config": {
+    "lookback_multiple": 5,
+    "history_multiple": 10,
+    "architecture": "generic",
+    "loss": "smape",
+    "steps": 3000,
+    "batch_size": 1024,
+    "learning_rate": 0.001,
+    "eval_every": 250,
+    "seed": 2,
+    "width": 256,
+    "blocks": 12,
+    "tags": {}
+  },
+  "best_step": 1000,
+  "curve": [
+    {
+      "step": 250,
+      "train_loss": 6.036143779754639,
+      "validation_smape": 7.759481799909267
+    },
+    {
+      "step": 500,
+      "train_loss": 5.711379528045654,
+      "validation_smape": 7.490106878538414
+    },
+    {
+      "step": 750,
+      "train_loss": 5.273807525634766,
+      "validation_smape": 7.225261168797833
+    },
+    {
+      "step": 1000,
+      "train_loss": 4.701047897338867,
+      "validation_smape": 7.167058548825133
+    },
+    {
+      "step": 1250,
+      "train_loss": 4.587332725524902,
+      "validation_smape": 7.599525056207933
+    },
+    {
+      "step": 1500,
+      "train_loss": 4.225944995880127,
+      "validation_smape": 7.638737104534687
+    },
+    {
+      "step": 1750,
+      "train_loss": 4.125932216644287,
+      "validation_smape": 7.237221508267954
+    },
+    {
+      "step": 2000,
+      "train_loss": 3.9039862155914307,
+      "validation_smape": 7.173792033031701
+    }
+  ],
+  "validation_smape": 7.167058548825133,
+  "train_seconds": 247.8617411310006,
+  "parameters": 2811816
+}

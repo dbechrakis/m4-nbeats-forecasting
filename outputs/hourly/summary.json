@@ -1,0 +1,23 @@
+{
+  "frequency": "Hourly",
+  "series": 414,
+  "horizon": 48,
+  "ensemble_members": 6,
+  "best_benchmark": "Seasonal naive",
+  "owa_ensemble": 0.4424297929194316,
+  "owa_best_benchmark": 0.6275032783362919,
+  "owa_gain_vs_best_benchmark_95ci": [
+    0.14597721202359265,
+    0.22580382844594218
+  ],
+  "share_of_series_ensemble_beats_best_benchmark_smape": 0.7222222222222222,
+  "validation_smape_ensemble": 9.887573787314539,
+  "member_validation_smape": {
+    "generic-L2-s0": 11.4466592200491,
+    "generic-L3-s1": 10.603393399734625,
+    "generic-L5-s2": 10.523524006717578,
+    "interpretable-L2-s3": 11.90393090795815,
+    "interpretable-L3-s4": 10.861071229175202,
+    "interpretable-L5-s5": 10.596789561736296
+  }
+}
