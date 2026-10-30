@@ -1,4 +1,4 @@
-# N-BEATS vs the M4 Benchmarks — Global Deep Learning Forecasting in PyTorch
+# N-BEATS on M4 Hourly, Weekly and Daily: Global Deep Learning Forecasting in PyTorch
 
 A from-scratch PyTorch implementation of **N-BEATS** (Oreshkin et al., ICLR 2020), with generic and interpretable trend/seasonality architectures. It is trained as one global model per frequency on the **M4 competition** Hourly (414 series), Daily (4,227) and Weekly (359) data, and scored against the competition's statistical benchmarks with the official sMAPE, MASE and OWA.
 
@@ -75,6 +75,7 @@ outputs/<freq>/    # metrics, summaries, figures, per-member forecasts and curve
 
 ## Limitations
 
+- Three of the six M4 frequencies. Hourly, Weekly and Daily hold 5,000 of the 100,000 M4 series. Yearly, Quarterly and Monthly are not covered, so no claim here applies to them or to the full M4 leaderboard.
 - 6 networks per frequency and CPU-length training: smaller than the published ensemble.
 - One test horizon per series, as in M4. The bootstrap intervals resample series, not time.
 - No exogenous inputs or probabilistic forecasts; these are point forecasts only.
