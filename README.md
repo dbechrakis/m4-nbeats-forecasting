@@ -1,6 +1,6 @@
 # N-BEATS on M4 Hourly, Weekly and Daily: Global Deep Learning Forecasting in PyTorch
 
-A from-scratch PyTorch implementation of **N-BEATS** (Oreshkin et al., ICLR 2020), with generic and interpretable trend/seasonality architectures. It is trained as one global model per frequency on the **M4 competition** Hourly (414 series), Daily (4,227) and Weekly (359) data, and scored with the official sMAPE, MASE and OWA against five of the competition's statistical benchmarks: Naive, Seasonal naive, Naive2, SES and Theta. M4's other benchmarks (Holt, Damped and their combination Comb) are not implemented, so "best benchmark" below means the best of these five.
+A from-scratch PyTorch implementation of **N-BEATS** (Oreshkin et al., ICLR 2020), with generic and interpretable trend/seasonality architectures. It is trained as one global model per frequency on the **M4 competition** Hourly (414 series), Daily (4,227) and Weekly (359) data, and scored with the official sMAPE, MASE and OWA against the competition's eight statistical benchmarks: Naive, Seasonal naive, Naive2, SES, Holt, Damped, Comb and Theta.
 
 ## Results on the official M4 test horizon
 
@@ -9,14 +9,14 @@ OWA is the official M4 score relative to Naive2 (lower is better; below 1 beats 
 | Frequency | Series × horizon | N-BEATS ensemble OWA | Best benchmark (OWA) | OWA gain, 95% bootstrap CI | Series where N-BEATS has lower sMAPE |
 |---|---|---:|---|---|---:|
 | **Hourly** | 414 × 48 | **0.442** | Seasonal naive (0.628) | **0.15 to 0.23** | 72% |
-| **Weekly** | 359 × 13 | **0.777** | Theta (0.969) | **0.12 to 0.27** | 62% |
-| Daily | 4,227 × 14 | 1.001 | Theta (0.999) | −0.007 to 0.001 (no gain) | 39% |
+| **Weekly** | 359 × 13 | **0.777** | Damped (0.919) | **0.08 to 0.21** | 63% |
+| Daily | 4,227 × 14 | 1.001 | Comb (0.985) | −0.034 to 0.001 (no gain) | 41% |
 
 **Where deep learning earns its keep, and where it does not:**
 
 - **Hourly:** a single global network learns daily cycles shared across hundreds of series. That beats the strongest per-series benchmark by 30% in OWA (sMAPE 9.2 vs 13.9).
-- **Weekly:** the gain holds on a much smaller dataset (359 series). Ensembling matters here: the six members' validation sMAPE ranges from 6.9 to 8.2.
-- **Daily:** nothing beats Naive2 by a meaningful margin. Theta (OWA 0.999) and the generic members alone (0.994) land a fraction of a percent below it, and the full ensemble (1.001) lands just above. The bootstrap interval for the ensemble's gain over Theta (−0.007 to 0.001) includes zero. Many M4 daily series behave close to a random walk; 37% of them are financial series. The networks' validation curves peaked early: the interpretable members' best step was 750–1,000 of 3,000, a sign they were fitting noise. This is the same conclusion as my [AAPL backtest](https://github.com/dbechrakis/aapl-forecasting-backtest): when the future is close to unpredictable, a flexible model has nothing to learn.
+- **Weekly:** the gain holds on a much smaller dataset (359 series), 15% in OWA over Damped trend, the strongest benchmark here. Against Theta alone it looked like 20%, which is why the full benchmark set matters. Ensembling matters here: the six members' validation sMAPE ranges from 6.9 to 8.2.
+- **Daily:** N-BEATS does not beat the statistical benchmarks. Comb, the mean of SES, Holt and Damped, is best (OWA 0.985), ahead of the full ensemble (1.001) and of its generic members alone (0.994). The ensemble's gain over Comb has a bootstrap interval of −0.034 to 0.001. Many M4 daily series behave close to a random walk; 37% of them are financial series. The networks' validation curves peaked early: the interpretable members' best step was 750–1,000 of 3,000, a sign they were fitting noise. This is the same conclusion as my [AAPL backtest](https://github.com/dbechrakis/aapl-forecasting-backtest): when the future is close to unpredictable, a flexible model has nothing to learn.
 
 | Hourly method | sMAPE | MASE | OWA |
 |---|---:|---:|---:|
@@ -27,6 +27,9 @@ OWA is the official M4 score relative to Naive2 (lower is better; below 1 beats 
 | SES | 18.09 | 2.384 | 0.990 |
 | Naive2 | 18.38 | 2.395 | 1.000 |
 | Theta | 18.13 | 2.454 | 1.006 |
+| Damped | 19.44 | 2.990 | 1.153 |
+| Comb | 24.61 | 4.628 | 1.636 |
+| Holt | 36.56 | 9.494 | 2.977 |
 
 ![Hourly forecasts at the 25th, 50th and 75th percentile of N-BEATS error](outputs/hourly/example_forecasts.png)
 
@@ -41,7 +44,7 @@ The paper trains 180 networks per frequency, with longer schedules, on GPUs. Thi
 ## Protocol
 
 - **Data:** the official M4 train/test files, SHA-256 pinned ([`data.py`](src/deepforecast/data.py)).
-- **Benchmarks:** Naive, Seasonal naive, Naive2, SES and Theta, following the [M4 reference R code](https://github.com/Mcompetitions/M4-methods/blob/master/Benchmarks%20and%20Evaluation.R). That code applies a 90% autocorrelation seasonality test and, if it passes, classical multiplicative decomposition. Naive, Seasonal naive and Naive2 are deterministic and follow it exactly. SES and Theta pick the smoothing parameter by grid search rather than R's likelihood optimiser, so they can differ slightly from the reference.
+- **Benchmarks:** Naive, Seasonal naive, Naive2, SES, Holt, Damped, Comb (the mean of SES, Holt and Damped) and Theta, following the [M4 reference R code](https://github.com/Mcompetitions/M4-methods/blob/master/Benchmarks%20and%20Evaluation.R). That code applies a 90% autocorrelation seasonality test and, if it passes, classical multiplicative decomposition. Naive, Seasonal naive and Naive2 are deterministic and follow it exactly. SES, Holt, Damped and Theta pick their smoothing parameters by grid search rather than R's likelihood optimiser, so they can differ slightly from the reference.
 - **No test leakage:**
   - The last horizon of every training series is held out as validation.
   - Each network keeps the weights with the best validation sMAPE.
@@ -75,7 +78,7 @@ outputs/<freq>/    # metrics, summaries, figures, per-member forecasts and curve
 
 ## Limitations
 
-- Five of M4's eight statistical benchmarks. Holt, Damped and Comb are missing, and the published M4 submissions are not compared, so the gains below are against a partial benchmark set.
+- Holt and Damped are fitted by grid search on one-step squared error, like SES and Theta here, not by the likelihood optimiser of the M4 reference R code, so their scores can differ slightly from the published benchmarks. The published M4 submissions are not compared.
 - Three of the six M4 frequencies. Hourly, Weekly and Daily hold 5,000 of the 100,000 M4 series. Yearly, Quarterly and Monthly are not covered, so no claim here applies to them or to the full M4 leaderboard.
 - 6 networks per frequency and CPU-length training: smaller than the published ensemble.
 - One test horizon per series, as in M4. The bootstrap intervals resample series, not time.

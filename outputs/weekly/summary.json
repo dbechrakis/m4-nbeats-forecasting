@@ -3,14 +3,14 @@
   "series": 359,
   "horizon": 13,
   "ensemble_members": 6,
-  "best_benchmark": "Theta",
+  "best_benchmark": "Damped",
   "owa_ensemble": 0.776672075520519,
-  "owa_best_benchmark": 0.9686710744840139,
+  "owa_best_benchmark": 0.9192579705147874,
   "owa_gain_vs_best_benchmark_95ci": [
-    0.1213838252222926,
-    0.2671543586495299
+    0.0779847815971428,
+    0.20605464247038308
   ],
-  "share_of_series_ensemble_beats_best_benchmark_smape": 0.6239554317548747,
+  "share_of_series_ensemble_beats_best_benchmark_smape": 0.6267409470752089,
   "validation_smape_ensemble": 6.751991120969623,
   "member_validation_smape": {
     "generic-L2-s0": 8.2322783284899,
