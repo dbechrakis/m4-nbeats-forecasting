@@ -1,6 +1,6 @@
 # N-BEATS on M4 Hourly, Weekly and Daily: Global Deep Learning Forecasting in PyTorch
 
-A from-scratch PyTorch implementation of **N-BEATS** (Oreshkin et al., ICLR 2020), with generic and interpretable trend/seasonality architectures. It is trained as one global model per frequency on the **M4 competition** Hourly (414 series), Daily (4,227) and Weekly (359) data, and scored against the competition's statistical benchmarks with the official sMAPE, MASE and OWA.
+A from-scratch PyTorch implementation of **N-BEATS** (Oreshkin et al., ICLR 2020), with generic and interpretable trend/seasonality architectures. It is trained as one global model per frequency on the **M4 competition** Hourly (414 series), Daily (4,227) and Weekly (359) data, and scored with the official sMAPE, MASE and OWA against five of the competition's statistical benchmarks: Naive, Seasonal naive, Naive2, SES and Theta. M4's other benchmarks (Holt, Damped and their combination Comb) are not implemented, so "best benchmark" below means the best of these five.
 
 ## Results on the official M4 test horizon
 
@@ -16,7 +16,7 @@ OWA is the official M4 score relative to Naive2 (lower is better; below 1 beats 
 
 - **Hourly:** a single global network learns daily cycles shared across hundreds of series. That beats the strongest per-series benchmark by 30% in OWA (sMAPE 9.2 vs 13.9).
 - **Weekly:** the gain holds on a much smaller dataset (359 series). Ensembling matters here: the six members' validation sMAPE ranges from 6.9 to 8.2.
-- **Daily:** nothing beats Naive2. Many M4 daily series behave close to a random walk; 37% of them are financial series. The networks' validation curves peaked early: the interpretable members' best step was 750–1,000 of 3,000, a sign they were fitting noise. This is the same conclusion as my [AAPL backtest](https://github.com/dbechrakis/aapl-forecasting-backtest): when the future is close to unpredictable, a flexible model has nothing to learn.
+- **Daily:** nothing beats Naive2 by a meaningful margin. Theta (OWA 0.999) and the generic members alone (0.994) land a fraction of a percent below it, and the full ensemble (1.001) lands just above. The bootstrap interval for the ensemble's gain over Theta (−0.007 to 0.001) includes zero. Many M4 daily series behave close to a random walk; 37% of them are financial series. The networks' validation curves peaked early: the interpretable members' best step was 750–1,000 of 3,000, a sign they were fitting noise. This is the same conclusion as my [AAPL backtest](https://github.com/dbechrakis/aapl-forecasting-backtest): when the future is close to unpredictable, a flexible model has nothing to learn.
 
 | Hourly method | sMAPE | MASE | OWA |
 |---|---:|---:|---:|
@@ -75,6 +75,7 @@ outputs/<freq>/    # metrics, summaries, figures, per-member forecasts and curve
 
 ## Limitations
 
+- Five of M4's eight statistical benchmarks. Holt, Damped and Comb are missing, and the published M4 submissions are not compared, so the gains below are against a partial benchmark set.
 - Three of the six M4 frequencies. Hourly, Weekly and Daily hold 5,000 of the 100,000 M4 series. Yearly, Quarterly and Monthly are not covered, so no claim here applies to them or to the full M4 leaderboard.
 - 6 networks per frequency and CPU-length training: smaller than the published ensemble.
 - One test horizon per series, as in M4. The bootstrap intervals resample series, not time.
