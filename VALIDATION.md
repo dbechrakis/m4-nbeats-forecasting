@@ -17,3 +17,9 @@
   - They also check that the interpretable parts sum to the forecast and that a small network learns a seasonal pattern.
   - CI also smoke-trains on real M4 Weekly data.
 - **Not done.** No GPU-scale ensemble, no reproduction of the paper's exact numbers, and no comparison with the M4 competitors' submissions.
+
+## The full M4 benchmark set, 2026-11-09
+
+Holt, Damped and Comb were added to `deepforecast.baselines`, applied to the deseasonalised series as in the M4 reference code and fitted by grid search (alpha, beta as a share of alpha, and phi for Damped). Tests check that Holt continues an exact line exactly, that a simulated Holt series returns its smoothing parameters, that Damped flattens, and that Comb is the mean of its parts. `scripts/evaluate.py` now computes only benchmarks missing from each `benchmarks.npz`, and the five existing benchmark forecasts were confirmed byte-identical afterwards. The N-BEATS members were not retrained.
+
+The best benchmark changed on two frequencies. Weekly: Damped (OWA 0.919) instead of Theta (0.969), so the N-BEATS gain falls from 20% to 15% of OWA, with a bootstrap interval of 0.08 to 0.21 that still excludes zero. Daily: Comb (0.985), which beats every N-BEATS variant. Hourly is unchanged, because Holt, Damped and Comb do poorly on hourly cycles (1.15 to 2.98).

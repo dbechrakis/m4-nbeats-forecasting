@@ -26,13 +26,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def benchmark_forecasts(dataset, out: Path) -> dict[str, np.ndarray]:
     cache = out / "benchmarks.npz"
-    if cache.exists():
-        return dict(np.load(cache))
-    forecasts = {
-        name: np.stack([method(series, dataset.horizon, dataset.season) for series in dataset.train])
-        for name, method in BENCHMARKS.items()
-    }
-    np.savez_compressed(cache, **forecasts)
+    forecasts = dict(np.load(cache)) if cache.exists() else {}
+    missing = [name for name in BENCHMARKS if name not in forecasts]
+    for name in missing:
+        forecasts[name] = np.stack([BENCHMARKS[name](series, dataset.horizon, dataset.season) for series in dataset.train])
+    if missing:
+        np.savez_compressed(cache, **forecasts)
     return forecasts
 
 

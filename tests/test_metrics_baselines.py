@@ -52,6 +52,31 @@ class BaselineTests(unittest.TestCase):
         self.assertTrue(np.all(np.diff(forecast) > 0))
         self.assertTrue(np.all(baselines.theta(np.linspace(100, 1, 200), 500, 1) >= 0))
 
+    def test_holt_continues_an_exact_line_and_damped_flattens_it(self):
+        line = 3.0 + 2.0 * np.arange(60)
+        np.testing.assert_allclose(baselines.holt(line, 8, 1), 3.0 + 2.0 * np.arange(60, 68))
+        noisy = line + np.random.default_rng(0).normal(0, 2, 60)
+        steps = np.diff(baselines.damped(noisy, 30, 1))
+        self.assertTrue(np.all(steps > 0) and steps[-1] < steps[0])
+
+    def test_holt_fit_recovers_the_smoothing_that_generated_the_series(self):
+        rng = np.random.default_rng(1)
+        level, trend, values = 50.0, 0.5, []
+        for _ in range(3000):
+            value = level + trend + rng.normal(0, 1)
+            new_level = 0.3 * value + 0.7 * (level + trend)
+            trend = 0.1 * (new_level - level) + 0.9 * trend
+            level = new_level
+            values.append(value)
+        (alpha, beta, phi), _, _ = baselines.holt_fit(np.array(values), damped=False)
+        self.assertAlmostEqual(alpha, 0.3, delta=0.05)
+        self.assertLess(abs(beta - 0.1), 0.04)
+        self.assertEqual(phi, 1.0)
+
+    def test_comb_is_the_mean_of_ses_holt_and_damped_on_seasonal_data(self):
+        parts = [f(self.seasonal, 24, 24) for f in (baselines.ses, baselines.holt, baselines.damped)]
+        np.testing.assert_allclose(baselines.comb(self.seasonal, 24, 24), np.mean(parts, axis=0))
+
 
 if __name__ == "__main__":
     unittest.main()
