@@ -1,5 +1,7 @@
 # Validation record
 
+**Scope of the latest review.** Rerun in the review of 2026-11-14: the unit tests and lint with the pinned requirements. Recorded history and not rerun in that review: all training and every metric in the README. Command: `make check`.
+
 ## First full run — 2026-10-08
 
 - **Data.** M4 Hourly, Daily and Weekly train/test files were downloaded from the M4-methods repository and verified against the SHA-256 values pinned in `src/deepforecast/data.py`.
@@ -23,3 +25,8 @@
 Holt, Damped and Comb were added to `deepforecast.baselines`, applied to the deseasonalised series as in the M4 reference code and fitted by grid search (alpha, beta as a share of alpha, and phi for Damped). Tests check that Holt continues an exact line exactly, that a simulated Holt series returns its smoothing parameters, that Damped flattens, and that Comb is the mean of its parts. `scripts/evaluate.py` now computes only benchmarks missing from each `benchmarks.npz`, and the five existing benchmark forecasts were confirmed byte-identical afterwards. The N-BEATS members were not retrained.
 
 The best benchmark changed on two frequencies. Weekly: Damped (OWA 0.919) instead of Theta (0.969), so the N-BEATS gain falls from 20% to 15% of OWA, with a bootstrap interval of 0.08 to 0.21 that still excludes zero. Daily: Comb (0.985), which beats every N-BEATS variant. Hourly is unchanged, because Holt, Damped and Comb do poorly on hourly cycles (1.15 to 2.98).
+
+## Tests for the network's building blocks — 2026-11-14
+
+- Added `tests/test_basis.py`. The trend basis reproduces a known quadratic on the lookback and the forecast side. The seasonality basis reproduces a cosine and a sine with a period of one horizon, and a constant coefficient gives a flat term. The generic basis takes the first lookback and last horizon coefficients. After the validation split, no input or target value that the sampler draws is a value of the held-out horizon. The median of members ignores one member that is far off.
+- 23 tests pass with the pinned requirements on Python 3.12, and the repository's lint passes. Nothing was retrained and no result changed.
