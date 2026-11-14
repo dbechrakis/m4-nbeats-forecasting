@@ -1,5 +1,7 @@
 # Validation record
 
+**Scope of the latest review.** Rerun in the review of 2026-11-14: the unit tests and lint with the pinned requirements. Recorded history and not rerun in that review: all training and every metric in the README. Command: `make check`.
+
 ## First full run — 2026-10-08
 
 - **Data.** M4 Hourly, Daily and Weekly train/test files were downloaded from the M4-methods repository and verified against the SHA-256 values pinned in `src/deepforecast/data.py`.
